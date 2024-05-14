@@ -1,0 +1,4 @@
+Lenguaje de programacion: Python
+Framework: Flask
+ORM: SQLAlchemy
+Gestor de Base de Datos: Postgresql

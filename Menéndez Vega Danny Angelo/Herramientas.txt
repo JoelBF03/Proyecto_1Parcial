@@ -1,0 +1,4 @@
+Lenguaje de programacion: PHP
+Framework: Laravel
+ORM: Prisma
+Gestor de Base de Datos: Postgresql
