@@ -1,12 +1,22 @@
 from src.app import db
 
 class Cliente(db.Model):
-    idCliente = db.Column(db.Integer, primary_key=True)
+    idCliente = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(50), nullable=False)
     apellido = db.Column(db.String(75), nullable=False)
     cedula = db.Column(db.String(10), unique=True, nullable=False)
     correo = db.Column(db.String(100), unique=True, nullable=False)
     telefono = db.Column(db.String(10), nullable=False)
+
+    def serialize(self):
+        return {
+            'idCliente': self.idCliente,
+            'nombre': self.nombre,
+            'apellido': self.apellido,
+            'cedula': self.cedula,
+            'correo': self.correo,
+            'telefono': self.telefono
+        }
 
     def __str__(self):
         return (
@@ -19,8 +29,14 @@ class Cliente(db.Model):
         )
 
 class MetodoPago(db.Model):
-    idMetodo_pago = db.Column(db.Integer, primary_key=True)
+    idMetodo_pago = db.Column(db.Integer, primary_key=True, autoincrement=True)
     descripcion = db.Column(db.String(50), nullable=False)
+
+    def serialize(self):
+        return {
+            'idMetodo_pago': self.idMetodo_pago,
+            'descripcion': self.descripcion
+        }
 
     def __str__(self):
         return( 
@@ -29,9 +45,15 @@ class MetodoPago(db.Model):
         )
 
 class TipoServicio(db.Model):
-    idTipo_servicio = db.Column(db.Integer, primary_key=True)
+    idTipo_servicio = db.Column(db.Integer, primary_key=True, autoincrement=True)
     descripcion = db.Column(db.String(100), nullable=False)
 
+    def serialize(self):
+        return {
+            'idTipo_servicio': self.idTipo_servicio,
+            'descripcion': self.descripcion
+        }
+    
     def __str__(self):
         return (
             f"Id: {self.idTipo_servicio}, "
@@ -39,13 +61,26 @@ class TipoServicio(db.Model):
         )
 
 class Pedido(db.Model):
-    idPedido = db.Column(db.Integer, primary_key=True)
+    idPedido = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pedido_ropa = db.Column(db.String(50), nullable=False)
     pedido_cantidad = db.Column(db.String(10), nullable=False)
     observacion = db.Column(db.String(200), nullable=True)
     fecha_servicio = db.Column(db.Date, nullable=False)
     idCliente = db.Column(db.Integer, db.ForeignKey('cliente.idCliente'), nullable=False)
     idMetodo_pago = db.Column(db.Integer, db.ForeignKey('metodo_pago.idMetodo_pago'), nullable=False)
+    cliente = db.relationship('Cliente', backref='pedidos')
+    metodo_pago = db.relationship('MetodoPago', backref='pedidos')
+
+    def serialize(self):
+        return {
+            'idPedido': self.idPedido,
+            'pedido_ropa': self.pedido_ropa,
+            'pedido_cantidad': self.pedido_cantidad,
+            'observacion': self.observacion,
+            'fecha_servicio': self.fecha_servicio,
+            'idCliente': self.idCliente,
+            'idMetodo_pago': self.idMetodo_pago
+        }
 
     def __str__(self):
         return (
@@ -59,11 +94,25 @@ class Pedido(db.Model):
         )
     
 class PedidoServicio(db.Model):
-    idPedido_servicio = db.Column(db.Integer, primary_key=True)
+    idPedido_servicio = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cantidad = db.Column(db.Integer, nullable=False)
     descripcion = db.Column(db.String(255), nullable=False)
     idPedido = db.Column(db.Integer, db.ForeignKey('pedido.idPedido'), nullable=False)
     idTipo_servicio = db.Column(db.Integer, db.ForeignKey('tipo_servicio.idTipo_servicio'), nullable=False)
+    
+    pedido = db.relationship('Pedido', backref='pedido_servicio', lazy=True)
+    tipo_servicio = db.relationship('TipoServicio', backref='pedido_servicio', lazy=True)
+
+    def serialize(self):
+        pedido = Pedido.query.get(self.idPedido)
+        tipo_servicio = TipoServicio.query.get(self.idTipo_servicio)
+        return {
+            'idPedido_servicio': self.idPedido_servicio,
+            'cantidad': self.cantidad,
+            'descripcion': self.descripcion,
+            'pedido': pedido.serialize() if pedido else None,
+            'tipo_servicio': tipo_servicio.serialize() if tipo_servicio else None
+        }
 
     def __str__(self):
         return (f"Id: {self.idPedido_servicio}, "

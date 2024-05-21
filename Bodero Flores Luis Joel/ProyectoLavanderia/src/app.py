@@ -25,6 +25,11 @@ migrate = Migrate(app, db)
 
 # Importar los modelos después de crear db para que SQLAlchemy los conozca
 from src.models import *
+from src.routes.cliente_route import cliente_bp
+from src.routes.metodo_pago_route import metodopago_bp
+from src.routes.tipo_servicio_route import tiposervicio_bp
+from src.routes.pedido_route import pedido_bp
+from src.routes.pedido_servicio_route import pedidoservicio_bp
 
 # Definir una función para inicializar las migraciones
 def initialize_migrations():
@@ -36,3 +41,21 @@ def initialize_migrations():
 # Si ejecutas db.py directamente, inicializa las migraciones
 if __name__ == '__main__':
     initialize_migrations()
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+app.register_blueprint(cliente_bp)
+print(app.url_map)
+
+app.register_blueprint(metodopago_bp)
+print(app.url_map)
+
+app.register_blueprint(tiposervicio_bp)
+print(app.url_map)
+
+app.register_blueprint(pedido_bp)
+print(app.url_map)
+
+app.register_blueprint(pedidoservicio_bp)
+print(app.url_map)
