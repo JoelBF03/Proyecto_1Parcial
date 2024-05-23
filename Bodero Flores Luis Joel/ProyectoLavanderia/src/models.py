@@ -1,12 +1,16 @@
 from src.app import db
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
-class Cliente(db.Model):
+class Cliente(db.Model, UserMixin):
     idCliente = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(50), nullable=False)
     apellido = db.Column(db.String(75), nullable=False)
     cedula = db.Column(db.String(10), unique=True, nullable=False)
     correo = db.Column(db.String(100), unique=True, nullable=False)
     telefono = db.Column(db.String(10), nullable=False)
+    contraseña = db.Column(db.String(128), nullable=False)
+
 
     def serialize(self):
         return {
@@ -27,6 +31,15 @@ class Cliente(db.Model):
             f"Correo: {self.correo}," 
             f"Telefono: {self.telefono}"
         )
+    
+    def get_id(self):
+        return str(self.idCliente)
+    
+    def set_password(self, password):
+        self.contraseña = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.contraseña, password)
 
 class MetodoPago(db.Model):
     idMetodo_pago = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -72,14 +85,26 @@ class Pedido(db.Model):
     metodo_pago = db.relationship('MetodoPago', backref='pedidos')
 
     def serialize(self):
+        cliente = Cliente.query.get(self.idCliente)
+        metodo_pago = MetodoPago.query.get(self.idMetodo_pago)
+        servicios = [{
+            'idPedido_servicio': servicio.idPedido_servicio,
+            'cantidad': servicio.cantidad,
+            'descripcion': servicio.descripcion,
+            'tipo_servicio': {
+                'idTipo_servicio': servicio.tipo_servicio.idTipo_servicio,
+                'descripcion': servicio.tipo_servicio.descripcion
+            }
+        } for servicio in self.pedido_servicio]
         return {
             'idPedido': self.idPedido,
             'pedido_ropa': self.pedido_ropa,
             'pedido_cantidad': self.pedido_cantidad,
             'observacion': self.observacion,
             'fecha_servicio': self.fecha_servicio,
-            'idCliente': self.idCliente,
-            'idMetodo_pago': self.idMetodo_pago
+            'cliente': cliente.serialize() if cliente else None,
+            'metodo_pago': metodo_pago.serialize() if metodo_pago else None,
+            'servicios': servicios
         }
 
     def __str__(self):
@@ -104,13 +129,11 @@ class PedidoServicio(db.Model):
     tipo_servicio = db.relationship('TipoServicio', backref='pedido_servicio', lazy=True)
 
     def serialize(self):
-        pedido = Pedido.query.get(self.idPedido)
         tipo_servicio = TipoServicio.query.get(self.idTipo_servicio)
         return {
             'idPedido_servicio': self.idPedido_servicio,
             'cantidad': self.cantidad,
             'descripcion': self.descripcion,
-            'pedido': pedido.serialize() if pedido else None,
             'tipo_servicio': tipo_servicio.serialize() if tipo_servicio else None
         }
 

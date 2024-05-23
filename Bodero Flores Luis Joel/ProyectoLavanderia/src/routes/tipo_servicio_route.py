@@ -1,11 +1,12 @@
 from flask import Blueprint, request, jsonify
 from src.models import TipoServicio
-from src.app import db
+from flask_jwt_extended import jwt_required
 
 tiposervicio_bp = Blueprint('tipo_servicio', __name__)
 
 # GET - OBTENER TODOS LOS TIPOS DE SERVICIO
 @tiposervicio_bp.route('/tipo_servicio', methods=['GET'])
+@jwt_required()
 def get_tipos_servicio():
     try:
         tipos_servicio = TipoServicio.query.order_by(TipoServicio.idTipo_servicio.asc()).all()
@@ -15,19 +16,7 @@ def get_tipos_servicio():
         print("Error al obtener los tipos de servicio:", str(e))
         return jsonify({'error': 'No se pudo obtener los tipos de servicio'}), 500
 
-# GET - OBTENER UN TIPO DE SERVICIO POR SU ID
-@tiposervicio_bp.route('/tipo_servicio/<int:id>', methods=['GET'])
-def get_tipo_servicio(id):
-    try:
-        tipo_servicio = TipoServicio.query.get(id)
-        if tipo_servicio:
-            return jsonify(tipo_servicio.serialize()), 200
-        else:
-            return jsonify({'error': 'Tipo de servicio no encontrado'}), 404
-    except Exception as e:
-        print("Error al obtener el tipo de servicio:", str(e))
-        return jsonify({'error': 'No se pudo obtener el tipo de servicio'}), 500
-
+"""
 # POST - CREAR UN NUEVO TIPO DE SERVICIO
 @tiposervicio_bp.route('/tipo_servicio', methods=['POST'])
 def create_tipo_servicio():
@@ -80,3 +69,5 @@ def delete_tipo_servicio(id):
         db.session.rollback()
         print("Error al eliminar el tipo de servicio:", str(e))
         return jsonify({'error': 'No se pudo eliminar el tipo de servicio'}), 500
+
+ """

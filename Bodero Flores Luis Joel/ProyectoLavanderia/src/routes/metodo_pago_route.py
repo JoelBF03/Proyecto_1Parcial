@@ -1,11 +1,12 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 from src.models import MetodoPago
-from src.app import db
+from flask_jwt_extended import jwt_required
 
 metodopago_bp = Blueprint('metodo_pago', __name__)
 
 # GET - OBTENER TODOS LOS METODOS DE PAGO
 @metodopago_bp.route('/metodo_pago', methods=['GET'])
+@jwt_required()
 def get_metodos_pago():
     try:
         metodos_pago = MetodoPago.query.order_by(MetodoPago.idMetodo_pago.asc()).all()
@@ -15,19 +16,7 @@ def get_metodos_pago():
         print("Error al obtener los métodos de pago:", str(e))
         return jsonify({'error': 'No se pudo obtener los métodos de pago'}), 500
 
-# GET - OBTENER METODO DE PAGO POR ID
-@metodopago_bp.route('/metodo_pago/<int:id>', methods=['GET'])
-def get_metodo_pago(id):
-    try:
-        metodo_pago = MetodoPago.query.get(id)
-        if metodo_pago:
-            return jsonify(metodo_pago.serialize()), 200
-        else:
-            return jsonify({'error': 'Metodo de pago no encontrado'}), 404
-    except Exception as e:
-        print("Error al obtener el método de pago:", str(e))
-        return jsonify({'error': 'No se pudo obtener el método de pago'}), 500
-    
+"""
 # POST - CREAR UN NUEVO METODO DE PAGO
 @metodopago_bp.route('/metodo_pago', methods=['POST'])
 def create_metodo_pago():
@@ -43,7 +32,7 @@ def create_metodo_pago():
         db.session.rollback()
         print("Error al crear el método de pago:", str(e))
         return jsonify({'error': 'No se pudo crear el método de pago'}), 500
-
+    
 # PUT - ACTUALIZAR UN METODO DE PAGO EXISTENTE
 @metodopago_bp.route('/metodo_pago/<int:id>', methods=['PUT'])
 def update_metodo_pago(id):
@@ -81,3 +70,4 @@ def delete_metodo_pago(id):
         db.session.rollback()
         print("Error al eliminar el método de pago:", str(e))
         return jsonify({'error': 'No se pudo eliminar el método de pago'}), 500
+     """
