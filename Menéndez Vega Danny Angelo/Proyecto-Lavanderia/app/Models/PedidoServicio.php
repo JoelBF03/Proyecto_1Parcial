@@ -10,8 +10,8 @@ class PedidoServicio extends Model
     use HasFactory;
 
     protected $table = 'pedido_servicio';
-    protected $primaryKey = 'id_pedido_servicio';
-    protected $fillable = ['id_pedido', 'id_tipo_servicio', 'fecha_servicio', 'total_servicio'];
+    protected $primaryKey = 'id';
+    protected $fillable = ['id_pedido', 'id_tipo_servicio', 'cantidad_servicio', 'descripcion'];
 
     public function pedido()
     {

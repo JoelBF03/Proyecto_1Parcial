@@ -10,7 +10,7 @@ class Pedido extends Model
     use HasFactory;
     protected $table = 'pedidos';
     protected $primaryKey = 'id_pedido';
-    protected $fillable = ['id_cliente', 'id_metodo_pago', 'total_pedido', 'fecha_pedido'];
+    protected $fillable = ['id_cliente', 'id_metodo_pago', 'cantidad_pedido', 'fecha_pedido','observacion'];
 
     public function cliente()
     {
@@ -22,7 +22,7 @@ class Pedido extends Model
         return $this->belongsTo(MetodoPago::class, 'id_metodo_pago', 'id_metodo_pago');
     }
 
-    public function pedidosServicios()
+    public function pedidoServicios()
     {
         return $this->hasMany(PedidoServicio::class, 'id_pedido', 'id_pedido');
     }

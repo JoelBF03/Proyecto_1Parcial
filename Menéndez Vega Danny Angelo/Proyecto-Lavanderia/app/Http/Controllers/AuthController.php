@@ -11,11 +11,15 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
-        ],['email.required'=>'Se requiere el email para autenticar','email.email'=>'El dato enviado no es un email','password.required'=>'La contraseña es requerida']);
+        ], [
+            'email.required' => 'El email es requerido',
+            'email.email' => 'El email no es válido',
+            'password.required' => 'La contraseña es requerida'
+        ]);
 
         if (!auth()->attempt($request->only('email', 'password'))) {
             return response([
-                'message' => 'Credenciales Invalidas'
+                'message' => 'Invalid credentials'
             ], 401);
         }
 

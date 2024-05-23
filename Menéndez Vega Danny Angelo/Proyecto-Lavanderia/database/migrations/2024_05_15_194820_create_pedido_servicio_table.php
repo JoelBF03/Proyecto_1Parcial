@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_pedido')->references('id_pedido')->on('pedidos');
             $table->foreignId('id_tipo_servicio')->references('id_tipo_servicio')->on('tipo_servicio');
-            $table->decimal('total_servicio', 8, 2);
+            $table->integer('cantidad_servicio');
             $table->string('descripcion');
             $table->timestamps();
         });

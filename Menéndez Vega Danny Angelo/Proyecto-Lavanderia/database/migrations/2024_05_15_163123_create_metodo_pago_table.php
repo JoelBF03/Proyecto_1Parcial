@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('metodo_pago', function (Blueprint $table) {
             $table->id('id_metodo_pago');
-            $table->string('description');
+            $table->string('nombre');
+            $table->string('descripcion');
+            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }

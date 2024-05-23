@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id('id_pedido');
             $table->foreignId('id_cliente')->references('id_cliente')->on('clientes');
             $table->foreignId('id_metodo_pago')->references('id_metodo_pago')->on('metodo_pago');
-            $table->decimal('total_pedido', 8, 2);
+            $table->integer('cantidad_pedido');
             $table->string('observacion');
-            $table->date('fecha_entrega');
+            $table->date('fecha_pedido');
+            $table->boolean('estado')->default(1);
             $table->timestamps();
         });
     }

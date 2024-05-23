@@ -10,7 +10,7 @@ class TipoServicio extends Model
     use HasFactory;
     protected $table = 'tipo_servicio';
     protected $primaryKey = 'id_tipo_servicio';
-    protected $fillable = ['descripcion'];
+    protected $fillable = ['nombre','descripcion'];
 
     public function pedidosServicios()
     {
